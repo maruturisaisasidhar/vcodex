@@ -1,0 +1,24 @@
+{
+  "name": "lara-ai-backend",
+  "version": "1.0.0",
+  "description": "Lara AI Backend Server for V-CodeX",
+  "main": "server-production.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server-production.js",
+    "dev": "node server-production.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "cors": "^2.8.5",
+    "node-fetch": "^3.3.2",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": ["ai", "chatbot", "gemini", "backend"],
+  "author": "V-CodeX Team",
+  "license": "MIT"
+}

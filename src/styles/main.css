@@ -1,0 +1,14 @@
+/*
+This file injects Tailwind's base styles, component classes, and utility classes into our application.
+We can also define global base styles for our entire project here.
+*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-900 text-gray-200 antialiased;
+  }
+}

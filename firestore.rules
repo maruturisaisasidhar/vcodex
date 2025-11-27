@@ -1,0 +1,72 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if the requesting user has the 'faculty' role.
+    function isFaculty() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'faculty';
+    }
+
+    // --------------------------------------------------------------------
+    // Rules for the 'users' collection (No changes needed)
+    // --------------------------------------------------------------------
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth.uid == userId;
+    }
+
+    // --------------------------------------------------------------------
+    // Rules for the 'projects' collection (No changes needed)
+    // --------------------------------------------------------------------
+    match /projects/{projectId} {
+      allow create: if request.auth != null && request.resource.data.ownerId == request.auth.uid;
+      allow read: if request.auth != null && (request.auth.uid == resource.data.ownerId || request.auth.uid in resource.data.collaborators);
+      allow update: if request.auth != null && (request.auth.uid == resource.data.ownerId || request.auth.uid in resource.data.collaborators);
+      allow delete: if request.auth != null && request.auth.uid == resource.data.ownerId;
+    }
+
+    // --------------------------------------------------------------------
+    // ✨ UPDATED: Rules for the 'faculty' collection
+    // --------------------------------------------------------------------
+    match /faculty/{facultyId} {
+      // Allow anyone to read this collection for ID verification.
+      allow read: if true;
+      
+      // ✅ FIX: Allow a logged-in user to UPDATE a document, but only to
+      // link their account for the very first time.
+      allow update: if request.auth != null
+                    && resource.data.vcodex_uid == null
+                    && request.resource.data.vcodex_uid == request.auth.uid;
+                    
+      // Still prevent anyone from creating or deleting faculty from the app.
+      allow create, delete: if false;
+    }
+    
+    // --------------------------------------------------------------------
+    // ✨ Rules for the 'questions' collection (No changes needed)
+    // --------------------------------------------------------------------
+    match /questions/{questionId} {
+      allow read: if request.auth != null;
+      allow write: if isFaculty();
+    }
+    
+    // --------------------------------------------------------------------
+    // ✨ Rules for the 'exams' collection (No changes needed)
+    // --------------------------------------------------------------------
+    match /exams/{examId} {
+      allow read: if request.auth != null;
+      allow write: if isFaculty();
+    }
+    
+    // --------------------------------------------------------------------
+    // ✨ Rules for the 'submissions' collection (No changes needed)
+    // --------------------------------------------------------------------
+    match /submissions/{submissionId} {
+      allow create: if request.auth.uid == request.resource.data.studentId;
+      allow read: if request.auth.uid == resource.data.studentId || isFaculty();
+      allow update: if request.auth.uid == resource.data.studentId;
+      allow delete: if false;
+    }
+  }
+}
