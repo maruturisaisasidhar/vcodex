@@ -1181,6 +1181,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import { useFileSystem } from "../hooks/useFileSystem";
+import { WS_ENDPOINTS } from "../config/api";
 
 import CodeEditor from "../components/editor/CodeEditor";
 import FileTree from "../components/file-explorer/FileTree";
@@ -1511,16 +1512,9 @@ const EditorPage = () => {
     const isProjectMode = currentUser && activeFilePath;
     const codeToRun = isProjectMode ? editorContent : guestCode;
 
-    // Use environment variable or fallback to localhost for development
-    const SERVER_IP =
-      import.meta.env.VITE_EXECUTION_SERVER_URL?.replace("ws://", "").replace(
-        ":3000",
-        ""
-      ) || "100.26.140.182";
-
     const socketURL = isProjectMode
-      ? `ws://${SERVER_IP}:3000/shell`
-      : `ws://${SERVER_IP}:3000/runner`;
+      ? WS_ENDPOINTS.shell
+      : WS_ENDPOINTS.codeRunner;
 
     setIsExecuting(true);
     setBottomPanelTab("terminal");
