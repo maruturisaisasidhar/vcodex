@@ -3,18 +3,16 @@
 // Get API URL from environment variable or fallback to localhost
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+// WebSocket Endpoints for Execution Server
 export const EXECUTION_SERVER_URL =
-  import.meta.env.VITE_EXECUTION_SERVER_URL || "ws://localhost:3000";
+  import.meta.env.VITE_EXECUTION_SERVER_URL || "ws://100.26.140.182:3000";
 
 // API Endpoints
 export const API_ENDPOINTS = {
   health: `${API_BASE_URL}/health`,
   laraAsk: `${API_BASE_URL}/api/lara/ask`,
 };
-
-// WebSocket Endpoints for Execution Server
-export const EXECUTION_SERVER_URL =
-  import.meta.env.VITE_EXECUTION_SERVER_URL || "ws://100.26.140.182:3000";
 
 export const WS_ENDPOINTS = {
   codeRunner: `${EXECUTION_SERVER_URL}/runner`,
